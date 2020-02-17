@@ -1,0 +1,20 @@
+{
+  "name": "go-vue-front",
+  "version": "1.0.0",
+  "dependencies": {
+    "vue": "2.6.11",
+    "vue-hot-reload-api": "^2.3.4",
+    "vue-router": "3.1.5",
+    "vuetify": "2.2.12"
+  },
+  "devDependencies": {
+    "@vue/component-compiler-utils": "^3.1.1",
+    "parcel-bundler": "1.12.4",
+    "stylus": "^0.54.7",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "scripts": {
+    "start": "npx parcel index.html",
+    "build": "npx parcel build index.html"
+  }
+}
