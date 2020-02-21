@@ -3,12 +3,10 @@ package main
 
 import (
 	_ "GoVueFront/statik"
-	"github.com/go-chi/chi"
-	"github.com/unrolled/render"
+	"github.com/labstack/echo/v4"
+	"github.com/rakyll/statik/fs"
 	"log"
 	"net/http"
-
-	"github.com/rakyll/statik/fs"
 )
 
 type User struct {
@@ -17,28 +15,19 @@ type User struct {
 }
 
 func main() {
+	e := echo.New()
 	sfs, err := fs.New()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	mux := chi.NewRouter()
-	r := render.New()
-
-	mux.Get("/*", func(writer http.ResponseWriter, request *http.Request) {
-		fileServer := http.StripPrefix("/", http.FileServer(sfs))
-		fileServer.ServeHTTP(writer, request)
-	})
-
-	mux.Get("/api", func(writer http.ResponseWriter, request *http.Request) {
-		_ = r.JSON(writer, http.StatusOK, User{
-			Name: "Joe",
-			Age:  34,
+	e.GET("/*", echo.WrapHandler(http.StripPrefix("/", http.FileServer(sfs))))
+	e.GET("/api", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, User{
+			Name: "John Doe",
+			Age:  35,
 		})
 	})
 
-	err = http.ListenAndServe("localhost:8080", mux)
-	if err != nil {
-		log.Fatal(err)
-	}
+	e.Logger.Fatal(e.Start("localhost:8080"))
 }
