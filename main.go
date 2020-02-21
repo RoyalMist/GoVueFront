@@ -3,6 +3,7 @@ package main
 
 import (
 	_ "GoVueFront/statik"
+	"errors"
 	"github.com/labstack/echo/v4"
 	"github.com/rakyll/statik/fs"
 	"log"
@@ -22,12 +23,24 @@ func main() {
 	}
 
 	e.GET("/*", echo.WrapHandler(http.StripPrefix("/", http.FileServer(sfs))))
-	e.GET("/api", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, User{
-			Name: "John Doe",
-			Age:  35,
-		})
-	})
+	e.GET("/api", getHandler)
+	e.POST("/api", postHandler)
 
 	e.Logger.Fatal(e.Start("localhost:8080"))
+}
+
+func postHandler(c echo.Context) error {
+	u := new(User)
+	if err := c.Bind(u); err != nil {
+		return errors.New("boom")
+	}
+
+	return c.JSON(http.StatusOK, u)
+}
+
+func getHandler(c echo.Context) error {
+	return c.JSON(http.StatusOK, User{
+		Name: "John Doe",
+		Age:  35,
+	})
 }
